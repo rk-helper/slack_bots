@@ -3,25 +3,29 @@ import csv
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
-reviewer = str(input())
-website = str(input())
+#### before start - login to load yopur account in cookies
+#### before start - delete first line from csv file
+#### before start - check your chrome to be up to date
+
+reviewer = 'your_grader@mail.ru'
+website = 'link to your app slack'
 # csv -> data loading
 with open('slack-members.csv', 'r') as csv_file:
     csv_reader = csv.reader(csv_file)
 
     for line in csv_reader:
-        try:
             # load cookies
             chrome_options = Options()
             chrome_options.add_argument("--user-data-dir=chrome-data")
-            driver = webdriver.Chrome('/usr/local/Caskroom/chromedriver/81.0.4044.69/chromedriver',
+            driver = webdriver.Chrome('/usr/local/Caskroom/chromedriver/83.0.4103.39/chromedriver',
                                       options=chrome_options)
             chrome_options.add_argument("user-data-dir=chrome-data")
             driver.implicitly_wait(10)
             driver.get(website)
             # let's do shit
+
             driver.find_element_by_xpath(
-                '/html/body/div[2]/div/div[2]/div[2]/div/nav/div/div[1]/div/div[2]/div[1]/div/div/div[5]/div/div/button').click()
+                '/html/body/div[2]/div/div[2]/div[1]/div/nav/div/div[1]/div/div/div[1]/div/div/div[10]/div/div/button').click()
             driver.find_element_by_xpath('/html/body/div[6]/div/div/div/div/div/div/div[2]/button/div').click()
             driver.find_element_by_id('channel-name').send_keys('hw_' + line[0].replace('.', ''))
             driver.find_element_by_id('channel_create_modal_toggle').click()
@@ -38,7 +42,3 @@ with open('slack-members.csv', 'r') as csv_file:
             driver.find_element_by_xpath("/html/body/div[6]/div/div/div[3]/div/div/button").click()
             driver.quit()
             print('done.')
-        except Exception as e:
-            driver.quit()
-            print('shit, here we go again')
-            print(str(e))
